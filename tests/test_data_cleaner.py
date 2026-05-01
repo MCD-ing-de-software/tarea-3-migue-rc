@@ -164,8 +164,10 @@ class TestDataCleaner(unittest.TestCase):
         """
         df = make_sample_df()
         cleaner = DataCleaner()
-        result = cleaner.remove_outliers_iqr(df, "age", factor=1)
-        self.assertNotIn(120.0, result["age"])
+        result = cleaner.remove_outliers_iqr(df, "age", factor=0.8) # BUG: con factor=1.5, no elimina 120
+        self.assertNotIn(120.0, result["age"].tolist())
+        self.assertIn(25.0, result["age"].tolist())
+        self.assertIn(35.0, result["age"].tolist())
         self.assertTrue(result["age"].isin([25.0, 35.0]).any())
 
     def test_remove_outliers_iqr_raises_keyerror_for_missing_column(self):
